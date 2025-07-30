@@ -1,20 +1,28 @@
-let usuarios;
+
 const fs = require("fs");
 const path = require("path");
 
-function lerUsuarios() {
+function lerUsuarios(num) {
   try {
-    const dados = fs.readFileSync("usuarios.json", "utf-8"); // Lê o conteúdo do arquivo
-    const usuarios = JSON.parse(dados); // Converte a string JSON em array de objetos
-
-    return usuarios;
+    const linhas = fs.readFileSync("usuarios.json", "utf-8").split("\n").filter(Boolean); 
+    const usuarios = linhas
+  .map((linha) => {
+    try {
+      return JSON.parse(linha);
+    } catch {
+      return null;
+    }
+  })
+  .filter(Boolean);
+   if (typeof num === "number" && !isNaN(num)) {
+      return usuarios.slice(0, num);
+    }
+    return usuarios
   } catch (erro) {
-    // Em caso de erro (arquivo ausente ou malformado), exibe no console e retorna array vazio
+    
     console.error("Erro ao ler o arquivo usuarios.json:", erro);
     return [];
   }
 }
 
-usuarios = lerUsuarios();
-
-console.log(usuarios.length);
+module.exports = {lerUsuarios};

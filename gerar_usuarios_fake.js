@@ -22,26 +22,12 @@ async function gerarEGravarUsuarios() {
   console.log(
     `🛠️ Iniciando geração de ${TOTAL_USUARIOS} usuários em lotes de ${LOTE}...`
   );
-
-  fs.writeFileSync(ARQUIVO, "[\n"); // Início do array
-
-  for (let i = 0; i < TOTAL_USUARIOS; i += LOTE) {
-    const usuarios = [];
-
-    for (let j = 0; j < LOTE && i + j < TOTAL_USUARIOS; j++) {
-      usuarios.push(gerarUsuario());
-    }
-
-    const jsonLote = JSON.stringify(usuarios, null, 2);
-    fs.appendFileSync(ARQUIVO, jsonLote.slice(1, -1)); // remove [ e ]
-
-    if (i + LOTE < TOTAL_USUARIOS) {
-      fs.appendFileSync(ARQUIVO, ",\n");
-    }
+  if(fs.existsSync(ARQUIVO)) fs.unlinkSync(ARQUIVO);
+  for(let i = 0; i<TOTAL_USUARIOS;i++){
+    const usuario=gerarUsuario();
+    fs.appendFileSync(ARQUIVO,JSON.stringify(usuario) + '\n');
   }
-
-  fs.appendFileSync(ARQUIVO, "\n]");
-  console.log(`✅ Arquivo "${ARQUIVO}" gerado com sucesso!`);
+  console.log(`✅ Arquivo "${ARQUIVO}" gerado com sucesso e em fomrato NDJSON!`);
 }
 
 gerarEGravarUsuarios();

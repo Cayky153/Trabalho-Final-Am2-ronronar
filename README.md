@@ -2,9 +2,14 @@
 
 Este projeto foi desenvolvido como parte da disciplina **Autoração Multimídia II** do curso de **Bacharelado em Sistemas e Mídias Digitais** da **Universidade Federal do Ceará (UFC)**.
 
-## 👨‍🏫 Autor
+## 👨‍🏫 Equipe autora
 
-**Prof. Wellington W. F. Sarmento**  
+**Antônio Pedro Cayky Do Nascimento**  
+**Brener Gabriel Sousa Vansconcelos**
+**Clarissa Maria Araujo Inacio**
+**Davila Michelle Araujo Nascimento**
+**Elias Jeiel Lima de Menezes**
+**Saul de Andrade Guimaraes**
 Instituto Universidade Virtual (UFC Virtual)
 Universidade Federal do Ceará (UFC)
 
