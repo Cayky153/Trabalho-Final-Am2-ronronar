@@ -5,10 +5,15 @@ Este projeto foi desenvolvido como parte da disciplina **Autoração Multimídia
 ## 👨‍🏫 Equipe autora
 
 **Antônio Pedro Cayky Do Nascimento**  
+
 **Brener Gabriel Sousa Vansconcelos**
+
 **Clarissa Maria Araujo Inacio**
+
 **Davila Michelle Araujo Nascimento**
+
 **Elias Jeiel Lima de Menezes**
+
 **Saul de Andrade Guimaraes**
 Instituto Universidade Virtual (UFC Virtual)
 Universidade Federal do Ceará (UFC)
@@ -53,10 +58,10 @@ Você pode acessar um tutorial completo sobre estra aplicação de exemplo atrav
 | RF0002 | Listar os usuários em uma interface web com paginação                    | ☑️           |
 | RF0003 | Ordenar os usuários por nome ou idade, de forma crescente ou decrescente | ☑️           |
 | RF0004 | Inserir um novo usuário na base de dados (arquivo JSON)                  | ☑️           |
-| RF0005 | Atualizar os dados de um usuário (pelo ID)                               | ⬜           |
-| RF0006 | Remover um usuário do sistema (pelo ID\_                                 | ⬜           |
-| RNF001 | Salvar e manter persistência dos usuários em arquivo JSON                | ⬜           |
-| RNF002 | Paginar os usuários usando API (/list-users/:count?)                     | ⬜           |
+| RF0005 | Atualizar os dados de um usuário (pelo ID)                               | ☑️           |
+| RF0006 | Remover um usuário do sistema (pelo ID\_                                 | ☑️          |
+| RNF001 | Salvar e manter persistência dos usuários em arquivo JSON                | ☑️          |
+| RNF002 | Paginar os usuários usando API (/list-users/:count?)                     | ☑️          |
 
 ---
 
