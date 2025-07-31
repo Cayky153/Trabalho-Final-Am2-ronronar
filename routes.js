@@ -1,35 +1,48 @@
 const express = require("express");
 const { v4: uuidv4 } = require("uuid");
-const fs = require("fs");
 const path = require("path");
 const router = express.Router();
 
-const ARQUIVO = "usuarios.json";
 const { lerUsuarios } = require("./ler_usuarios.js");
+const fs = require("fs");
+const ARQUIVO = path.join(__dirname, "usuarios.json");
 
-// Funções auxiliares
+// Salva a lista inteira no arquivo NDJSON
 function salvarUsuarios(usuarios) {
-  const linhas = usuarios.map((usuario) => JSON.stringify(usuario)).join("\n");
-  fs.writeFileSync(ARQUIVO, linhas);
+  try {
+    const linhas = usuarios.map((usuario) => JSON.stringify(usuario)).join("\n");
+    fs.writeFileSync(ARQUIVO, linhas, "utf-8");
+    console.log("Arquivo salvo com sucesso");
+  } catch (err) {
+    console.error("Erro ao salvar arquivo:", err);
+  }
 }
 
-function appendUsuarios(usuario) {
+// Lê todos, adiciona um novo, salva tudo de novo
+function appendUsuarios(novoUsuario) {
   try {
-    fs.appendFileSync("usuarios.json", JSON.stringify(usuario) + "\n");
-    console.log("Dados appendados com sucesso!");
+    const usuarios = lerUsuarios();
+    usuarios.push(novoUsuario);
+    salvarUsuarios(usuarios);
+    console.log("Usuário adicionado com sucesso!");
   } catch (err) {
-    console.error("Erro ao escrever no arquivo:", err);
+    console.error("Erro ao adicionar usuário:", err);
     throw err;
   }
 }
+
 function validarEmail(email) {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return regex.test(email);
 }
 
 function limpatexto(texto) {
-  const invalidos = ["SELECT", "INSERT", "UPDATE", "DELETE", "ORDER BY", "FROM", "WHERE", "CREATE", "TABLE", "DATABASE", "'", ":", "=", '"', "?"];
-  let textolimpo = texto;
+  const invalidos = [
+    "SELECT", "INSERT", "UPDATE", "DELETE", "ORDER BY", "FROM", "WHERE", 
+    "CREATE", "TABLE", "DATABASE", "'", ":", "=", '"', "?"
+  ];
+
+  let textolimpo = String(texto); // ← isso evita o erro com números ou undefined
 
   function escaparRegex(texto) {
     return texto.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -44,7 +57,7 @@ function limpatexto(texto) {
   return textolimpo.trim().replace(/\s+/g, " ");
 }
 
-// Rota principal
+// Rota principal - serve a página index.html
 router.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
@@ -75,27 +88,29 @@ router.post("/cadastrar-usuario", (req, res) => {
   });
 });
 
-// Listar usuários
+// Listar usuários (com limite opcional)
 router.get("/list-users/:count?", (req, res) => {
   const num = parseInt(req.params.count);
   res.json(lerUsuarios(num));
 });
 
-// Editar usuário
+// Editar usuário pelo índice (id na rota é índice+1)
 router.put("/editar-usuario/:id", (req, res) => {
-  const userIndex = Number(req.params.id)-1; // converter para número
+  const userId = req.params.id; // agora é o UUID
   const usuarios = lerUsuarios();
 
-  if (isNaN(userIndex) || userIndex < 0 || userIndex >= usuarios.length) {
+  // Encontre o índice pelo id UUID
+  const userIndex = usuarios.findIndex(u => u.id === userId);
+  if (userIndex === -1) {
     return res.status(404).json({ ok: false, message: "Usuário não encontrado." });
   }
 
   const usuarioEditado = {
-    id: usuarios[userIndex].id, 
+    id: userId,
     nome: limpatexto(req.body.nome),
     idade: limpatexto(req.body.idade),
     endereco: limpatexto(req.body.endereco),
-    email: limpatexto(req.body.email)
+    email: limpatexto(req.body.email),
   };
 
   if (!usuarioEditado.nome || !usuarioEditado.idade || !usuarioEditado.endereco || !usuarioEditado.email) {
@@ -106,39 +121,34 @@ router.put("/editar-usuario/:id", (req, res) => {
     return res.status(400).json({ ok: false, message: "Email inválido." });
   }
 
-  usuarios[userIndex] = usuarioEditado; // atualiza o usuário na lista
+  usuarios[userIndex] = usuarioEditado;
   salvarUsuarios(usuarios);
 
   res.status(200).json({
     ok: true,
     message: "Usuário editado com sucesso!",
-    usuario: usuarioEditado
+    usuario: usuarioEditado,
   });
 });
 
 
-// Deletar usuário
 router.delete("/deletar-usuario/:id", (req, res) => {
-  const userIndex = Number(req.params.id) - 1;
-  let usuarios = lerUsuarios();
+  const userId = req.params.id;
+  const usuarios = lerUsuarios();
 
-  if (isNaN(userIndex) || userIndex < 0 || userIndex >= usuarios.length) {
-    return res.status(404).json({
-      ok: false,
-      message: "Usuário não encontrado.",
-    });
+  const userIndex = usuarios.findIndex(u => u.id === userId);
+  if (userIndex === -1) {
+    return res.status(404).json({ ok: false, message: "Usuário não encontrado." });
   }
-
-  const usuarioRemovido = usuarios[userIndex]; 
 
   usuarios.splice(userIndex, 1);
   salvarUsuarios(usuarios);
 
   res.status(200).json({
     ok: true,
-    message: "Usuário removido com sucesso!",
-    usuario: usuarioRemovido
+    message: "Usuário excluído com sucesso!",
   });
 });
+
 
 module.exports = router;

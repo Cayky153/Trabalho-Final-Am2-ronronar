@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cadastrar Usuário</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>Cadastro de Usuário</h1>
+
+  <form id="formCadastro">
+    <label for="nome">Nome:</label><br />
+    <input type="text" id="nome" name="nome" required /><br /><br />
+
+    <label for="idade">Idade:</label><br />
+    <input type="number" id="idade" name="idade" min="0" required /><br /><br />
+
+    <label for="endereco">Endereço:</label><br />
+    <input type="text" id="endereco" name="endereco" required /><br /><br />
+
+    <label for="email">Email:</label><br />
+    <input type="email" id="email" name="email" required /><br /><br />
+
+    <button type="submit">Cadastrar</button>
+  </form>
+
+  <p><a href="index.html">Voltar para lista de usuários</a></p>
+
+  <script>
+    const form = document.getElementById("formCadastro");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const nome = form.nome.value.trim();
+      const idade = Number(form.idade.value);
+      const endereco = form.endereco.value.trim();
+      const email = form.email.value.trim();
+
+      if (!nome || !idade || !endereco || !email) {
+        alert("Por favor, preencha todos os campos.");
+        return;
+      }
+
+      try {
+        const res = await fetch("http://localhost:3000/cadastrar-usuario", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ nome, idade, endereco, email }),
+        });
+
+        if (res.ok) {
+          alert("Usuário cadastrado com sucesso!");
+          window.location.href = "index.html";
+        } else {
+          alert("Erro ao cadastrar usuário.");
+        }
+      } catch (error) {
+        console.error("Erro:", error);
+        alert("Erro ao cadastrar usuário.");
+      }
+    });
+  </script>
+</body>
+</html>

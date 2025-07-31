@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lista de Usuários</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>👥 Lista de Usuários</h1>
+
+  <menu>
+    <a href="cadastra_usuario.html" rel="noopener noreferrer">Cadastrar Usuário</a>
+  </menu>
+
+  <table id="tabelaUsuarios">
+    <thead>
+      <tr>
+        <th onclick="ordenarTabela('nome')">Nome ⬍</th>
+        <th onclick="ordenarTabela('idade')">Idade ⬍</th>
+        <th>Endereço</th>
+        <th>Email</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div class="paginacao">
+    <button onclick="paginaAnterior()">⬅ Anterior</button>
+    Página <span id="paginaAtual">1</span> de <span id="totalPaginas">1</span>
+    <button onclick="proximaPagina()">Próxima ➡</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
