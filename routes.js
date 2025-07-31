@@ -5,6 +5,7 @@ const router = express.Router();
 
 const { lerUsuarios } = require("./ler_usuarios.js");
 const fs = require("fs");
+const { fa } = require("@faker-js/faker");
 const ARQUIVO = path.join(__dirname, "usuarios.json");
 
 // Salva a lista inteira no arquivo NDJSON
@@ -18,15 +19,24 @@ function salvarUsuarios(usuarios) {
   }
 }
 
-// Lê todos, adiciona um novo, salva tudo de novo
 function appendUsuarios(novoUsuario) {
   try {
-    const usuarios = lerUsuarios();
-    usuarios.push(novoUsuario);
-    salvarUsuarios(usuarios);
-    console.log("Usuário adicionado com sucesso!");
+    let prefix = "";
+    const stats = fs.statSync(ARQUIVO);
+    if (stats.size > 0) {
+      const buffer = Buffer.alloc(1);
+      const fd = fs.openSync(ARQUIVO, "r");
+      fs.readSync(fd, buffer, 0, 1, stats.size - 1);
+      fs.closeSync(fd);
+      if (buffer.toString() !== "\n") {
+        prefix = "\n";
+      }
+    }
+
+    fs.appendFileSync(ARQUIVO, prefix + JSON.stringify(novoUsuario) + "\n");
+    console.log("Dados appendados com sucesso!");
   } catch (err) {
-    console.error("Erro ao adicionar usuário:", err);
+    console.error("Erro ao escrever no arquivo:", err);
     throw err;
   }
 }
@@ -137,6 +147,11 @@ router.delete("/deletar-usuario/:id", (req, res) => {
   const usuarios = lerUsuarios();
 
   const userIndex = usuarios.findIndex(u => u.id === userId);
+  
+  if(!userIndex){
+    return res.status(404).json({ok:false,message:"Id não fornecido"})
+  }
+  
   if (userIndex === -1) {
     return res.status(404).json({ ok: false, message: "Usuário não encontrado." });
   }

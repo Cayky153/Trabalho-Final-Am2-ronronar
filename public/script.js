@@ -124,7 +124,7 @@ async function editarUsuario(id) {
     return;
   }
 
-  const response = await fetch(`/UPDATE/${id}`, {
+  const response = await fetch(`/editar-usuario/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ nome, idade, endereco, email }),
@@ -141,7 +141,7 @@ async function editarUsuario(id) {
 async function deletarUsuario(id) {
   if (!confirm("Tem certeza que deseja excluir este usuário?")) return;
 
-  const response = await fetch(`/DELETE/${id}`, {
+  const response = await fetch(`/deletar-usuario/${id}`, {
     method: "DELETE",
   });
 
